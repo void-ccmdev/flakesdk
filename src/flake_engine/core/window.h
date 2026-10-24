@@ -13,6 +13,7 @@ namespace Flake {
     };
 
     struct WindowObject {   
+    public:
         int width, height = 500;
         std::string title = "Flake window";
         GLFWwindow* glfw_window = nullptr;
@@ -30,6 +31,10 @@ namespace Flake {
         void changeWindowTitle(std::string& new_title, WindowObject& window);
         GLFWwindow* getCurrentWindow() const;
         bool shouldWindowClose(WindowObject& window) const;
+    private:
+        static void framebufferSizeCallback(GLFWwindow* window, int width, int height);
+        int m_framebufferWidth = 0;
+        int m_framebufferHeight = 0;
     };
 
 }   //namespace Flake

@@ -1,9 +1,9 @@
 #include "flake_engine/flake_engine.h"
 
-inline Flake::WindowServer windowServer;
-inline Flake::UIServer uiServer;
+Flake::WindowServer windowServer;
+Flake::UIServer uiServer;
 
-int main()
+int main(void)
 {   
     Flake::WindowObject mainWindow;
     {

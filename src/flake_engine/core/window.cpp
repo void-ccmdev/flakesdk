@@ -5,6 +5,15 @@ using namespace Flake;
 
 //- Window Server Class
 
+void WindowServer::framebufferSizeCallback(GLFWwindow* window, int width, int height)
+{
+    auto* owner = static_cast<WindowServer*>(glfwGetWindowUserPointer(window));
+    if (owner != nullptr) {
+        owner->m_framebufferWidth = width;
+        owner->m_framebufferHeight = height;
+    }
+    glViewport(0, 0, width, height);
+}
 WindowServer::~WindowServer()
 {
     glfwTerminate();
@@ -27,7 +36,10 @@ void WindowServer::createWindow(WindowObject& window)
         glfwTerminate();
         throw std::runtime_error("Failed to create a GLFW window!");
     }
+
     glfwMakeContextCurrent(window.glfw_window);
+    glfwSetWindowUserPointer(window.glfw_window, this);
+    glfwSetFramebufferSizeCallback(window.glfw_window, framebufferSizeCallback);
 
     if (!gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress))) {
         glfwDestroyWindow(window.glfw_window);
@@ -35,12 +47,18 @@ void WindowServer::createWindow(WindowObject& window)
         glfwTerminate();
         throw std::runtime_error("Failed to initialize GLAD!");
     }
+
+    glfwGetFramebufferSize(window.glfw_window, &m_framebufferWidth, &m_framebufferHeight);
+    glViewport(0, 0, m_framebufferWidth, m_framebufferHeight);
 }
 void WindowServer::updateWindow(WindowObject& window)
 {
-    glClear(GL_COLOR_BUFFER_BIT);
     glfwSwapBuffers(window.glfw_window);
-    glfwPollEvents();
+
+    glfwGetFramebufferSize(window.glfw_window, &m_framebufferWidth, &m_framebufferHeight);
+    glViewport(0, 0, m_framebufferWidth, m_framebufferHeight);
+
+    glClear(GL_COLOR_BUFFER_BIT);
 }
 void WindowServer::closeWindow(WindowObject& window)
 {
