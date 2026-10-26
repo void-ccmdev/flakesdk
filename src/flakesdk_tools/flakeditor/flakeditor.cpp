@@ -2,27 +2,40 @@
 
 Flake::WindowServer windowServer;
 Flake::UIServer uiServer;
+Flake::InputServer inputServer;
+//------------------------------------\\
+
+Flake::WindowObject mainWindow;
+Flake::InputEvent forceQuit;
+
+void forceQuitAction() {
+    windowServer.setWindowShouldClose(mainWindow, true);
+}
 
 int main(void)
 {   
-    Flake::WindowObject mainWindow;
     {
         mainWindow.width = 1280;
         mainWindow.height = 720;
         mainWindow.title = "Flake Editor";
         mainWindow.state = Flake::WindowState::windowed;
     }
-
     windowServer.createWindow(mainWindow);
+    {
+        forceQuit.event_name = std::string("force_quit");
+        forceQuit.device = Flake::InputDevice::KEYBOARD;
+        forceQuit.glfw_key = GLFW_KEY_END;
+        forceQuit.mod.alt = true;
+        forceQuit.action = forceQuitAction;
+    }
+    inputServer.addEvent(forceQuit);
 
     uiServer.ui_init();
+    uiServer.ui_set_style(Flake::UIStyle::DARK);
 
     while (!windowServer.shouldWindowClose(mainWindow)) {
+        inputServer.processInput(mainWindow.glfw_window);
         uiServer.ui_begin();
-
-        ImGui::Begin("Wassup bejing!", nullptr, ImGuiWindowFlags_NoCollapse);
-        ImGui::Text("This is raah!");
-        ImGui::End();
 
         uiServer.ui_end();
         windowServer.updateWindow(mainWindow);

@@ -76,3 +76,6 @@ bool WindowServer::shouldWindowClose(WindowObject& window) const
 {
     return glfwWindowShouldClose(window.glfw_window);
 }
+void WindowServer::setWindowShouldClose(WindowObject& window, bool value) {
+    glfwSetWindowShouldClose(window.glfw_window, value);
+}

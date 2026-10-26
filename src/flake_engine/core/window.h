@@ -31,6 +31,7 @@ namespace Flake {
         void changeWindowTitle(std::string& new_title, WindowObject& window);
         GLFWwindow* getCurrentWindow() const;
         bool shouldWindowClose(WindowObject& window) const;
+        void setWindowShouldClose(WindowObject& window, bool value);
     private:
         static void framebufferSizeCallback(GLFWwindow* window, int width, int height);
         int m_framebufferWidth = 0;
