@@ -1,3 +1,6 @@
 #include "core/window.h"
 #include "core/input.h"
 #include "ui/ui.h"
+#include "output/output.h"
+#include "filesystem/filesystem.h"
+#include "global/global.h"

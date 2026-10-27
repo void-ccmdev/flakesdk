@@ -3,6 +3,9 @@
 Flake::WindowServer windowServer;
 Flake::UIServer uiServer;
 Flake::InputServer inputServer;
+Flake::FileServer fileServer;
+Flake::GlobalServer globalServer;
+
 //------------------------------------\\
 
 Flake::WindowObject mainWindow;
