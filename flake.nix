@@ -20,7 +20,17 @@
             glfw3
             glfw
             libGL
+	    python3
+	    pkg-config
+	    glm
+	    mesa
+	    git
           ];
+	  shellHook = ''
+	  	export LIBGL_DRIVERS_PATH="${pkgs.mesa}/lib/dri"
+		  export __EGL_VENDOR_LIBRARY_FILENAMES="${pkgs.mesa}/share/glvnd/egl_vendor.d/50_mesa.json"
+		  export LD_LIBRARY_PATH="${pkgs.lib.makeLibraryPath [pkgs.libGL pkgs.mesa ]}:$LD_LIBRARY_PATH"
+	  '';
         };
     });
 }
