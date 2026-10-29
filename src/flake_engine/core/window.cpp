@@ -52,13 +52,14 @@ void WindowServer::createWindow(WindowObject& window)
     glViewport(0, 0, m_framebufferWidth, m_framebufferHeight);
 }
 void WindowServer::updateWindow(WindowObject& window)
-{
+{   
+    glfwPollEvents();
     glfwSwapBuffers(window.glfw_window);
 
     glfwGetFramebufferSize(window.glfw_window, &m_framebufferWidth, &m_framebufferHeight);
     glViewport(0, 0, m_framebufferWidth, m_framebufferHeight);
 
-    glClear(GL_COLOR_BUFFER_BIT);
+    //glClear(GL_COLOR_BUFFER_BIT);
 }
 void WindowServer::closeWindow(WindowObject& window)
 {

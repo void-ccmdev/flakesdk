@@ -12,12 +12,12 @@ void UIServer::ui_init()
     m_io = &ImGui::GetIO();
 
     m_io->ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
-    //m_io->ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad; -Enables GAMEPADS - NOT A FEATURE YET!
+    m_io->ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
     m_io->ConfigFlags |= ImGuiConfigFlags_DockingEnable;
     m_io->ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 
     ImGui_ImplGlfw_InitForOpenGL(glfwGetCurrentContext(), true);
-    ImGui_ImplOpenGL3_Init("#version 440");
+    ImGui_ImplOpenGL3_Init("#version 330");
 }
 void UIServer::ui_begin() 
 {
@@ -30,7 +30,10 @@ void UIServer::ui_begin()
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
 
-    ImGui::DockSpaceOverViewport();
+    ImGui::DockSpaceOverViewport(0,
+        ImGui::GetMainViewport(),
+        ImGuiDockNodeFlags_PassthruCentralNode
+    );
 }
 void UIServer::ui_set_style(UIStyle style) 
 {

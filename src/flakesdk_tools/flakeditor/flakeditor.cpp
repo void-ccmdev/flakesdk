@@ -5,6 +5,7 @@ Flake::UIServer uiServer;
 Flake::InputServer inputServer;
 Flake::FileServer fileServer;
 Flake::GlobalServer globalServer;
+Flake::RenderServer renderServer;
 
 //------------------------------------\\
 
@@ -33,12 +34,35 @@ int main(void)
     }
     inputServer.addEvent(forceQuit);
 
-    uiServer.ui_init();
+    renderServer.init();
+    renderServer.setClearColor(1.0f, 0.0f, 0.0f);
+    //renderServer.setPolygonMode(Flake::PolygonMode::WIREFRAME);
+
+    bool wireframe = false;
+
+    uiServer.ui_init(); 
     uiServer.ui_set_style(Flake::UIStyle::DARK);
 
     while (!windowServer.shouldWindowClose(mainWindow)) {
+        
         inputServer.processInput(mainWindow.glfw_window);
+
+        renderServer.setClearColor(0.1f, 0.1f, 0.1f);
+        renderServer.clear();
+        renderServer.render();   
+
         uiServer.ui_begin();
+
+        ImGui::Begin("Hello window!");
+        ImGui::Text("HIII");
+        ImGui::Checkbox("Wireframe", &wireframe);
+        ImGui::End();
+        
+        if (wireframe) {
+            renderServer.setPolygonMode(Flake::PolygonMode::WIREFRAME);
+        } else {
+            renderServer.setPolygonMode(Flake::PolygonMode::FILL);
+        }
 
         uiServer.ui_end();
         windowServer.updateWindow(mainWindow);
