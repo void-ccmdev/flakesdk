@@ -11,8 +11,8 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 set(SRC_DIR "${CMAKE_SOURCE_DIR}/src")
 
-set(ENGINE_DIR "${CMAKE_SOURCE_DIR}/src/flake_engine")
-set(ENGINE_DEPENDENCIES_DIR "${ENGINE_DIR}/dependencies")
+set(ENGINE_DIR "${SRC_DIR}/flake_engine")
+set(ENGINE_DEPENDENCIES_DIR "${CMAKE_SOURCE_DIR}/dependencies")
 set(INCLUDE_DIR "${ENGINE_DEPENDENCIES_DIR}/include")
 set(LIB_DIR "${ENGINE_DEPENDENCIES_DIR}/lib")
 

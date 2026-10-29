@@ -18,7 +18,7 @@ std::any GlobalServer::getVariable(std::string& name) {
         }
     }
     Flake::OutputServer output;
-    output.printErr("Can't find global variable: " + name);
+    output.printErr(std::string((std::string)"Can't find global variable: " + name));
     return nullptr;
 }
 
@@ -33,5 +33,5 @@ void GlobalServer::removeVariable(std::string& name) {
         }
     }
     Flake::OutputServer output;
-    output.printErr("Can't remove variable: '" + name + "' : Doesn't exist!");
+    output.printErr(std::string((std::string)"Can't remove variable: '" + name + (std::string)"' : Doesn't exist!"));
 }

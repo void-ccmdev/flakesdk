@@ -1,0 +1,11 @@
+The FlakeSDK's code is licensed under the Apache 2.0 license.
+The dependencies folder contains third-party libraries with their corresponding licenses.
+
+Here is a list of used libraries with their path in the project, their license type and a URL link to their sources.
+
+ Name    |              License Type                      |             Path             |          URL
+ --------|------------------------------------------------|------------------------------|-----------------------
+ GLFW    |               zlib/libpng                      | dependencies/include/GLFW    | https://www.glfw.org/
+ ImGui   |                   MIT                          | dependencies/include/imgui   | https://github.com/ocornut/imgui
+ GLM     | The Happy Bunny License (Modified MIT License) | dependencies/include/glm     | https://github.com/g-truc/glm
+ GLAD    |                   MIT                          | dependencies/include/glad    | https://github.com/Dav1dde/glad
