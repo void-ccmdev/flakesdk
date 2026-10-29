@@ -1,6 +1,7 @@
 #pragma once
 
 #include <glm/glm.hpp>
+
 #include <vector>
 #include <glad/glad.h>
 
@@ -13,7 +14,7 @@ namespace Flake {
     struct Mesh {
         std::vector<Vertex> vertices;
         std::vector<GLushort> indices;
-
+        
         void db_createTriangle() {
             vertices = {
                 {{-0.5f, -0.5f, 0.0f}, {1.0f, 0.0f, 0.0f}},
@@ -28,7 +29,6 @@ namespace Flake {
                 {{ 0.5f, -0.5f, 0.0f}, {0.0f, 1.0f, 0.0f}}, //1
                 {{-0.5f,  0.5f, 0.0f}, {0.0f, 0.0f, 1.0f}}, //2
                 {{ 0.5f,  0.5f, 0.0f}, {1.0f, 1.0f, 0.0f}}, //3
-
             };
             indices = {
                 0, 1, 2,
@@ -36,8 +36,8 @@ namespace Flake {
             };
         }
 
-        long getVertexCount() {
-            return vertices.size() * 2;
+        GLsizei getVertexCount() {
+            return (vertices.size() * 2);
         }
     };
 }

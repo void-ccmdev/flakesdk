@@ -7,20 +7,26 @@
 #include "mesh/mesh.h"
 #include "shaders/shader.h"
 
+
 using namespace Flake;
 
 
 void RenderServer::setClearColor(float red, float green, float blue) { glClearColor(red, green, blue, 1.0); }
-void RenderServer::init() {}
+void RenderServer::init() {
+    //glEnable(GL_DEPTH_TEST);
+}
 
 void RenderServer::clear() { glClear(GL_COLOR_BUFFER_BIT); }
-void RenderServer::draw(Mesh mesh, Shader shader) {
+void RenderServer::draw(Datatypes::MeshObject meshObject, Shader shader) {
     shader.use();
+
+    unsigned int transformShaderLoc = glGetUniformLocation(shader.ID, "transform");
+    glUniformMatrix4fv(transformShaderLoc, 1, GL_FALSE, glm::value_ptr(meshObject.getTransform()));
 
     GLuint vertexBufferID;
     glGenBuffers(1, &vertexBufferID);
     glBindBuffer(GL_ARRAY_BUFFER, vertexBufferID);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(mesh.vertices) * sizeof(Vertex), mesh.vertices.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, meshObject.mesh.vertices.size() * sizeof(Vertex), meshObject.mesh.vertices.data(), GL_STATIC_DRAW);
     
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), reinterpret_cast<void*>(offsetof(Vertex, position)));
@@ -30,10 +36,10 @@ void RenderServer::draw(Mesh mesh, Shader shader) {
     GLuint indexBufferID;
     glGenBuffers(1, &indexBufferID);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBufferID);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(mesh.indices) * sizeof(Vertex), mesh.indices.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, meshObject.mesh.indices.size() * sizeof(meshObject.mesh.indices[0]), meshObject.mesh.indices.data(), GL_STATIC_DRAW);
 
-    //std::cout << mesh.getVertexCount() << std::endl; Prints the vertex count.
-    glDrawElements(GL_TRIANGLES, mesh.getVertexCount(), GL_UNSIGNED_SHORT, 0);
+    //std::cout << meshObject.mesh.getVertexCount() << std::endl;
+    glDrawElements(GL_TRIANGLES, meshObject.mesh.getVertexCount(), GL_UNSIGNED_SHORT, 0);
 
     glDeleteBuffers(1, &vertexBufferID);
     glDeleteBuffers(1, &indexBufferID);

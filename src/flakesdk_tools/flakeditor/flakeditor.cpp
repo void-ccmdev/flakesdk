@@ -39,29 +39,38 @@ int main(void)
     //renderServer.setPolygonMode(Flake::PolygonMode::WIREFRAME);
 
     bool wireframe = false;
+    float v = 0.0f;
+    float d = 0.0f;
+    float s = 1.0f;
+    float x = 0.0f;
 
     uiServer.ui_init(); 
     uiServer.ui_set_style(Flake::UIStyle::DARK);
 
+    Datatypes::MeshObject mesh_object;
     Flake::Mesh quad;
     quad.db_createQuad();
-    Flake::Mesh triangle;
-    triangle.db_createTriangle();
+    mesh_object.mesh = quad;
     Flake::Shader shader("src\\flake_engine\\graphics\\shaders\\vertex_shader.glsl", "src\\flake_engine\\graphics\\shaders\\fragment_shader.glsl");
 
     while (!windowServer.shouldWindowClose(mainWindow)) {
-        
         inputServer.processInput(mainWindow.glfw_window);
 
         renderServer.setClearColor(0.1f, 0.1f, 0.1f);
         renderServer.clear();
-        renderServer.draw(quad, shader);   
-        renderServer.draw(triangle, shader); 
+        renderServer.draw(mesh_object, shader);   
+        mesh_object.position = glm::vec3(x, 0, d);
+        mesh_object.rotation = glm::vec3(0, s, 0);
+        mesh_object.scale = glm::vec3(v, v, v);
 
         uiServer.ui_begin();
 
         ImGui::Begin("Settings");
         ImGui::Checkbox("Wireframe", &wireframe);
+        ImGui::SliderFloat("posx", &x, -10.0f, 10.0f);
+        ImGui::SliderFloat("posz", &d, -10.0f, 10.0f);
+        ImGui::SliderFloat("scale", &v, -10.0f, 10.0f);
+        ImGui::SliderFloat("rot", &s, -10.0f, 10.0f);
         ImGui::End();
         
         if (wireframe) {
