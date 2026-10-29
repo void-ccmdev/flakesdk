@@ -7,21 +7,31 @@
 #include "mesh/mesh.h"
 #include "shaders/shader.h"
 
-
 using namespace Flake;
-
 
 void RenderServer::setClearColor(float red, float green, float blue) { glClearColor(red, green, blue, 1.0); }
 void RenderServer::init() {
-    //glEnable(GL_DEPTH_TEST);
+    glEnable(GL_DEPTH_TEST);
 }
 
-void RenderServer::clear() { glClear(GL_COLOR_BUFFER_BIT); }
-void RenderServer::draw(Datatypes::MeshObject meshObject, Shader shader) {
+void RenderServer::clear() { glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); }
+void RenderServer::draw(Datatypes::MeshObject meshObject, Shader shader, Datatypes::Camera& camera) {
     shader.use();
 
-    unsigned int transformShaderLoc = glGetUniformLocation(shader.ID, "transform");
-    glUniformMatrix4fv(transformShaderLoc, 1, GL_FALSE, glm::value_ptr(meshObject.getTransform()));
+    camera.handleMovement();
+
+    glm::mat4 model = meshObject.getTransform();
+    glm::mat4 view = glm::inverse(camera.getTransform());
+    glm::mat4 projection = camera.getProjection();
+
+    int modelLoc = glGetUniformLocation(shader.ID, "model");
+    glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+
+    int viewLoc = glGetUniformLocation(shader.ID, "view");
+    glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+
+    int projectionLoc = glGetUniformLocation(shader.ID, "projection");
+    glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
     GLuint vertexBufferID;
     glGenBuffers(1, &vertexBufferID);

@@ -4,14 +4,16 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <GLFW/glfw3.h>
+
 
 namespace Datatypes {
     struct EmptyObject {
         std::string name = "EmptyObject";
         
-        glm::vec3 position;
-        glm::vec3 rotation;
-        glm::vec3 scale = glm::vec3(1.0f);
+        glm::vec3 position{0.0f};
+        glm::vec3 rotation{0.0f};
+        glm::vec3 scale{1.0f};
 
         glm::mat4 getTransform() {
             glm::mat4 model(1.0f);
@@ -24,5 +26,9 @@ namespace Datatypes {
 
             return model;
         }
+
+        void setPosition(float x, float y, float z) { position = glm::vec3(x,y,z); }
+        void setRotation(float x, float y, float z) { rotation = glm::vec3(x, y, z); }
+        void setScale(float x, float y, float z) { scale = glm::vec3(x, y ,z); }
     };
 }

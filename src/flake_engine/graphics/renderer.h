@@ -17,7 +17,7 @@ namespace Flake {
         void setClearColor(float red, float green, float blue);
         void init();
         void clear();
-        void draw(Datatypes::MeshObject meshObject, Shader shader);
+        void draw(Datatypes::MeshObject meshObject, Shader shader, Datatypes::Camera& camera);
         void destroy();
 
         void setPolygonMode(PolygonMode mode);

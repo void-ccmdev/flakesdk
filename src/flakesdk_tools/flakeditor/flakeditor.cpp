@@ -4,7 +4,7 @@ Flake::WindowServer windowServer;
 Flake::UIServer uiServer;
 Flake::InputServer inputServer;
 Flake::FileServer fileServer;
-Flake::GlobalServer globalServer;
+inline Flake::GlobalServer globalServer;
 Flake::RenderServer renderServer;
 
 //------------------------------------\\
@@ -40,7 +40,7 @@ int main(void)
 
     bool wireframe = false;
     float v = 0.0f;
-    float d = 0.0f;
+    float d = -2.0f;
     float s = 1.0f;
     float x = 0.0f;
 
@@ -49,19 +49,25 @@ int main(void)
 
     Datatypes::MeshObject mesh_object;
     Flake::Mesh quad;
-    quad.db_createQuad();
+    quad.db_createTriangle();
     mesh_object.mesh = quad;
     Flake::Shader shader("src\\flake_engine\\graphics\\shaders\\vertex_shader.glsl", "src\\flake_engine\\graphics\\shaders\\fragment_shader.glsl");
+
+    Datatypes::Camera camera;
+    mesh_object.setPosition(0,0,d);
+    
 
     while (!windowServer.shouldWindowClose(mainWindow)) {
         inputServer.processInput(mainWindow.glfw_window);
 
         renderServer.setClearColor(0.1f, 0.1f, 0.1f);
         renderServer.clear();
-        renderServer.draw(mesh_object, shader);   
+        renderServer.draw(mesh_object, shader, camera);   
         mesh_object.position = glm::vec3(x, 0, d);
-        mesh_object.rotation = glm::vec3(0, s, 0);
-        mesh_object.scale = glm::vec3(v, v, v);
+        mesh_object.rotation = glm::vec3(0, v, 0);
+        mesh_object.scale = glm::vec3(s, s, s);
+        
+        //mesh_object.rotation += mesh_object.rotation + glm::vec3(0, 0, (float)glfwGetTime() * 90000);
 
         uiServer.ui_begin();
 
@@ -69,8 +75,8 @@ int main(void)
         ImGui::Checkbox("Wireframe", &wireframe);
         ImGui::SliderFloat("posx", &x, -10.0f, 10.0f);
         ImGui::SliderFloat("posz", &d, -10.0f, 10.0f);
-        ImGui::SliderFloat("scale", &v, -10.0f, 10.0f);
-        ImGui::SliderFloat("rot", &s, -10.0f, 10.0f);
+        ImGui::SliderFloat("scale", &s, -10.0f, 10.0f);
+        ImGui::SliderFloat("rot", &v, -360.0f, 360.0f);
         ImGui::End();
         
         if (wireframe) {
