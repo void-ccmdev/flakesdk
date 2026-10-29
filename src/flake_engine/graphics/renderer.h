@@ -1,6 +1,8 @@
 #pragma once
 
 #include "../core/window.h"
+#include "mesh/mesh.h"
+#include "shaders/shader.h"
 
 namespace Flake {
     enum PolygonMode {
@@ -13,7 +15,7 @@ namespace Flake {
         void setClearColor(float red, float green, float blue);
         void init();
         void clear();
-        void render();
+        void draw(Mesh mesh, Shader shader);
         void destroy();
 
         void setPolygonMode(PolygonMode mode);

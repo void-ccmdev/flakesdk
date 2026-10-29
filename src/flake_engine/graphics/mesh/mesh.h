@@ -22,5 +22,22 @@ namespace Flake {
             };
             indices = {0, 1, 2};
         }
+        void db_createQuad() {
+            vertices = {
+                {{-0.5f, -0.5f, 0.0f}, {1.0f, 0.0f, 0.0f}}, //0
+                {{ 0.5f, -0.5f, 0.0f}, {0.0f, 1.0f, 0.0f}}, //1
+                {{-0.5f,  0.5f, 0.0f}, {0.0f, 0.0f, 1.0f}}, //2
+                {{ 0.5f,  0.5f, 0.0f}, {1.0f, 1.0f, 0.0f}}, //3
+
+            };
+            indices = {
+                0, 1, 2,
+                1, 3, 2
+            };
+        }
+
+        long getVertexCount() {
+            return vertices.size() * 2;
+        }
     };
 }

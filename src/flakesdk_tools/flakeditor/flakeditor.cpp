@@ -35,7 +35,7 @@ int main(void)
     inputServer.addEvent(forceQuit);
 
     renderServer.init();
-    renderServer.setClearColor(1.0f, 0.0f, 0.0f);
+    //renderServer.setClearColor(1.0f, 0.0f, 0.0f);
     //renderServer.setPolygonMode(Flake::PolygonMode::WIREFRAME);
 
     bool wireframe = false;
@@ -43,18 +43,24 @@ int main(void)
     uiServer.ui_init(); 
     uiServer.ui_set_style(Flake::UIStyle::DARK);
 
+    Flake::Mesh quad;
+    quad.db_createQuad();
+    Flake::Mesh triangle;
+    triangle.db_createTriangle();
+    Flake::Shader shader("src\\flake_engine\\graphics\\shaders\\vertex_shader.glsl", "src\\flake_engine\\graphics\\shaders\\fragment_shader.glsl");
+
     while (!windowServer.shouldWindowClose(mainWindow)) {
         
         inputServer.processInput(mainWindow.glfw_window);
 
         renderServer.setClearColor(0.1f, 0.1f, 0.1f);
         renderServer.clear();
-        renderServer.render();   
+        renderServer.draw(quad, shader);   
+        renderServer.draw(triangle, shader); 
 
         uiServer.ui_begin();
 
-        ImGui::Begin("Hello window!");
-        ImGui::Text("HIII");
+        ImGui::Begin("Settings");
         ImGui::Checkbox("Wireframe", &wireframe);
         ImGui::End();
         
