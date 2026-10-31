@@ -1,6 +1,6 @@
 #pragma once
 
-#include "empty_object.h"
+#include "../datatypes.h"
 
 namespace Datatypes {
     struct MeshObject : EmptyObject {

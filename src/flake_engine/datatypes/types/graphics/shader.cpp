@@ -14,6 +14,8 @@ void Shader::load() {
     const char* vert_shader_code = fs.readFile(vertex_shader_file).c_str();
     const char* frag_shader_code = fs.readFile(fragment_shader_file).c_str();
 
+    std::cout << vert_shader_code << std::endl;
+
     //Create shaders + info logs in case of failing compilation.
     GLuint vertex_shader, fragment_shader;
     int success;
