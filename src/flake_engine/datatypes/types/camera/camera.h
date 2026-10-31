@@ -5,8 +5,8 @@
 namespace Datatypes {
     struct Camera : EmptyObject {
         float fov = 45.0;
-        float near_plane = 0.01;
-        float far_plane = 1000.0;
+        float near_plane = 0.01f;
+        float far_plane = 1000.0f;
 
         float freecam_speed = 0.01f;
 

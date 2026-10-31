@@ -4,25 +4,25 @@
 
 using namespace Flake;
 
-void GlobalServer::setVariable(std::string& name, std::any& value) {
+void GlobalServer::setVariable(std::string name, std::any value) {
     for (auto& global : m_globals) {
         if (global.first == name) { global.second = value; return;}
     }
     m_globals.push_back( {name, value} );
 }
 
-std::any GlobalServer::getVariable(std::string& name) {
+std::any GlobalServer::getVariable(std::string name) {
     for (auto& global : m_globals) {
         if (global.first == name) {
             return global.second;
         }
     }
     Flake::OutputServer output;
-    output.printErr(std::string((std::string)"Can't find global variable: " + name));
+    output.printErr("Can't find global variable: " + name);
     return nullptr;
 }
 
-void GlobalServer::removeVariable(std::string& name) {
+void GlobalServer::removeVariable(std::string name) {
     int index = 0;
     for (auto& global : m_globals) {
         index++;
@@ -33,5 +33,5 @@ void GlobalServer::removeVariable(std::string& name) {
         }
     }
     Flake::OutputServer output;
-    output.printErr(std::string((std::string)"Can't remove variable: '" + name + (std::string)"' : Doesn't exist!"));
+    output.printErr("Can't remove variable: '" + name + (std::string)"' : Doesn't exist!");
 }

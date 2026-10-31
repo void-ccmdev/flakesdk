@@ -4,5 +4,5 @@
 #include "output/output.h"
 #include "filesystem/filesystem.h"
 #include "global/global.h"
-#include "graphics/renderer.h"
+//#include "graphics/renderer.h"
 #include "datatypes/datatypes.h"

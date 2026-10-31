@@ -1,3 +1,6 @@
 #include "types/empty_object.h"
 #include "types/mesh_object.h"
 #include "types/camera/camera.h"
+#include "types/graphics/mesh.h"
+#include "types/graphics/material.h"
+#include "types/graphics/shader.h"

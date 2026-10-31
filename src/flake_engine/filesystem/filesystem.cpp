@@ -9,7 +9,7 @@
 
 using namespace Flake;
 
-void FileServer::writeFile(File& file, std::string& content)
+void FileServer::writeFile(File file, std::string content)
 {
     std::filesystem::path directory = file.path;
     std::filesystem::path filePath = directory / file.name;
@@ -36,7 +36,7 @@ void FileServer::writeFile(File& file, std::string& content)
     newFile << content;
 }
 
-void FileServer::appendToFile(File& file, std::string& content)
+void FileServer::appendToFile(File file, std::string content)
 {
     std::filesystem::path directory = file.path;
     std::filesystem::path filePath = directory / file.name;
@@ -63,7 +63,7 @@ void FileServer::appendToFile(File& file, std::string& content)
     targetFile << content;
 }
 
-std::string FileServer::readFile(File& file)
+std::string FileServer::readFile(File file)
 {
     std::ifstream read_file(file.path + file.name);
 
@@ -79,7 +79,7 @@ std::string FileServer::readFile(File& file)
     return content.str();
 }
 
-void FileServer::removeFile(File& file)
+void FileServer::removeFile(File file)
 {
     std::filesystem::path filePath = std::filesystem::path(file.path) / file.name;
 
@@ -106,7 +106,7 @@ void FileServer::removeFile(File& file)
     }
 }
 
-File FileServer::createFile(std::string& name, std::string& path)
+File FileServer::createFile(std::string name, std::string path)
 {
     File file;
     file.name = name;
@@ -115,14 +115,14 @@ File FileServer::createFile(std::string& name, std::string& path)
     return file;
 }
 
-void FileServer::createFolder(std::string& name, std::string& path)
+void FileServer::createFolder(std::string name, std::string path)
 {
     std::filesystem::path folderPath = std::filesystem::path(path) / name;
     std::error_code err;
     std::filesystem::create_directories(folderPath, err);
 }
 
-void FileServer::removeFolder(std::string& path)
+void FileServer::removeFolder(std::string path)
 {
     std::filesystem::path folderPath = std::filesystem::path(path);
     std::error_code err;
