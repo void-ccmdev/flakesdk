@@ -11,18 +11,22 @@ using namespace Datatypes;
 
 void Shader::load() {
     //Read shader sources.
-    const char* vert_shader_code = fs.readFile(vertex_shader_file).c_str();
-    const char* frag_shader_code = fs.readFile(fragment_shader_file).c_str();
-
-    std::cout << vert_shader_code << std::endl;
+    std::string vert_shader_code = fs.readFile(vertex_shader_file);
+    std::string frag_shader_code = fs.readFile(fragment_shader_file);
 
     //Create shaders + info logs in case of failing compilation.
     GLuint vertex_shader, fragment_shader;
     int success;
     char infoLog[512];
 
+    const char* vert_shader_data = vert_shader_code.data(); 
+    const char* frag_shader_data = frag_shader_code.data(); 
+
+    //std::cout << vert_shader_data << std::endl;
+    //std::cout << frag_shader_data << std::endl;
+
     vertex_shader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vertex_shader, 1, &vert_shader_code, NULL);
+    glShaderSource(vertex_shader, 1, &vert_shader_data, NULL);
     glCompileShader(vertex_shader); //Compiling shader
     //Checking for compile errors.
     glGetShaderiv(vertex_shader, GL_COMPILE_STATUS, &success);
@@ -34,7 +38,7 @@ void Shader::load() {
     }
 
     fragment_shader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(fragment_shader, 1, &frag_shader_code, NULL);
+    glShaderSource(fragment_shader, 1, &frag_shader_data, NULL);
     glCompileShader(fragment_shader); //Compiling shader
 
     //Checking for compile errors.

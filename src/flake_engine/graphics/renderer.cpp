@@ -24,12 +24,37 @@ void RenderServer::setRenderMode(RenderMode mode)
 
 void RenderServer::initialize()
 {   
-    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_DEPTH_TEST);    // Enable depth test.
 
-    glGenBuffers(1, &m_vertexBuffer);
-    glGenBuffers(1, &m_indexBuffer);
+    glGenVertexArrays(1, &VAO); // Initialize buffers.
+    glGenBuffers(1, &VBO);
+    glGenBuffers(1, &EBO);
 
-    for (Datatypes::MeshObject object : m_render_queue) {
+    glBindVertexArray(VAO);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(Datatypes::Vertex) * 1000, nullptr, GL_DYNAMIC_DRAW);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint32_t) * 1000, nullptr, GL_DYNAMIC_DRAW);
+
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Datatypes::Vertex), (void*)offsetof(Datatypes::Vertex, position));
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Datatypes::Vertex), (void*)offsetof(Datatypes::Vertex, color_rgb));
+    glEnableVertexAttribArray(1);
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    //glBindVertexArray(0);
+}
+
+void RenderServer::pushRenderQueue() 
+{   
+    GLint prev_vert_size = 0;
+    GLint prev_indi_size = 0;
+
+    if (m_render_queue.empty()) { return; }
+
+    for (Datatypes::MeshObject object : m_render_queue)
+    {
         object.material.shader.load();
         object.material.shader.use();
 
@@ -38,26 +63,23 @@ void RenderServer::initialize()
         glm::mat4 projection = m_camera.getProjection();
 
         int modelLoc = glGetUniformLocation(object.material.shader.ID, "model");
-        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
         int viewLoc = glGetUniformLocation(object.material.shader.ID, "view");
-        glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
         int projectionLoc = glGetUniformLocation(object.material.shader.ID, "projection");
+
+        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+        glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
         glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
-        glBindBuffer(GL_ARRAY_BUFFER, m_vertexBuffer);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(object.mesh.vertices), object.mesh.vertices.data(), GL_STATIC_DRAW);
+        glBindBuffer(GL_ARRAY_BUFFER, VBO);
+        glBufferSubData(GL_ARRAY_BUFFER, prev_vert_size, object.mesh.vertices.size() * sizeof(Datatypes::Vertex), object.mesh.vertices.data());
 
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indexBuffer);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(object.mesh.indices), object.mesh.indices.data(), GL_STATIC_DRAW);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+        glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, prev_indi_size, object.mesh.indices.size() * sizeof(uint32_t), object.mesh.indices.data());
 
-        m_index_count = m_index_count += (GLuint)(sizeof(object.mesh.indices) / sizeof(uint32_t));
+        m_index_count = static_cast<GLsizei>(object.mesh.indices.size());
+        prev_vert_size += sizeof(object.mesh.vertices);
+        prev_indi_size += sizeof(object.mesh.indices);
     }
-
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), NULL);
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), NULL);
-
 }
 
 void RenderServer::setCamera(Datatypes::Camera& camera) 
@@ -73,5 +95,10 @@ void RenderServer::addToRenderQueue(Datatypes::MeshObject mesh_object)
 void RenderServer::render() {
     clear();
     m_camera.handleMovement();
+
+    pushRenderQueue();
+
+    glBindVertexArray(VAO);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
     glDrawElements(GL_TRIANGLES, m_index_count, GL_UNSIGNED_INT, NULL);
 }

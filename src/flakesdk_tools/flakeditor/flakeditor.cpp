@@ -52,7 +52,6 @@ int main(void)
     Flake::File frag_shader;
     vert_shader.path = std::string("src\\flake_engine\\graphics\\shaders\\default_vertex_shader.glsl");
     frag_shader.path = std::string("src\\flake_engine\\graphics\\shaders\\default_fragment_shader.glsl");
-    std::cout << fileServer.readFile(vert_shader) << std::endl;
 
     shader.vertex_shader_file = vert_shader;
     shader.fragment_shader_file = frag_shader;
@@ -60,7 +59,7 @@ int main(void)
     material.shader = shader;
     mesh.material = material;
         //Setup mesh
-    mesh.mesh.makeQuad();
+    mesh.mesh.makeTriangle();
     
     //Add mesh to render queue
     renderServer.addToRenderQueue(mesh);
@@ -69,7 +68,13 @@ int main(void)
     renderServer.setCamera(camera);
     renderServer.initialize();
 
+
+    //Sliders
+    float x = 0.0f;
+
     while (!windowServer.shouldWindowClose(mainWindow)) {
+        mesh.setPosition(x, 0.0f, 0.0f);
+
         inputServer.processInput(mainWindow.glfw_window);
 
         renderServer.render();
@@ -77,7 +82,7 @@ int main(void)
         uiServer.ui_begin();
 
         ImGui::Begin("Settings");
-        //stuff
+        ImGui::SliderFloat("xpos", &x, -10.0f, 10.0f);
         ImGui::End();
 
         uiServer.ui_end();

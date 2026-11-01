@@ -20,11 +20,11 @@
             glfw3
             glfw
             libGL
-	    python3
-	    pkg-config
-	    glm
-	    mesa
-	    git
+	          python3
+	          pkg-config
+	          glm
+	          mesa
+	          git
           ];
 	  shellHook = ''
 	  	export LIBGL_DRIVERS_PATH="${pkgs.mesa}/lib/dri"
