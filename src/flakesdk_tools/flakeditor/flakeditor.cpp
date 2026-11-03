@@ -39,41 +39,41 @@ int main(void)
 
     //Set up rendering
 
-    renderServer.setClearColor(0.1f, 0.1f, 0.1f); //Dark gray
-    renderServer.setRenderMode(Flake::RenderMode::NORMAL);
+    renderServer.initialize();
+    renderServer.setRenderMode(Flake::RenderMode::WIREFRAME);
 
     //Create a mesh with a material
     Datatypes::MeshObject mesh;
     Datatypes::Material material;
     Datatypes::Shader shader;
     Datatypes::Camera camera;
-        //Setup shaders
+
+    //Setup shaders
     Flake::File vert_shader;
     Flake::File frag_shader;
-    vert_shader.path = std::string("src\\flake_engine\\graphics\\shaders\\default_vertex_shader.glsl");
-    frag_shader.path = std::string("src\\flake_engine\\graphics\\shaders\\default_fragment_shader.glsl");
+    vert_shader.path = std::string("src/flake_engine/graphics/shaders/default_vertex_shader.glsl");
+    frag_shader.path = std::string("src/flake_engine/graphics/shaders/default_fragment_shader.glsl");
 
     shader.vertex_shader_file = vert_shader;
     shader.fragment_shader_file = frag_shader;
-        //Setup material
+
+    //Setup material
     material.shader = shader;
     mesh.material = material;
-        //Setup mesh
-    mesh.mesh.makeTriangle();
+
+    //Setup mesh
+    mesh.mesh.makeQuad();
     
     //Add mesh to render queue
-    renderServer.addToRenderQueue(mesh);
-
-    //After everything is working, initialize the renderer.
+    renderServer.addToQueue(mesh);
     renderServer.setCamera(camera);
-    renderServer.initialize();
-
 
     //Sliders
     float x = 0.0f;
+    bool wir = 0;
 
     while (!windowServer.shouldWindowClose(mainWindow)) {
-        mesh.setPosition(x, 0.0f, 0.0f);
+        //mesh.setPosition(x, 0.0f, 0.0f);
 
         inputServer.processInput(mainWindow.glfw_window);
 
@@ -82,11 +82,15 @@ int main(void)
         uiServer.ui_begin();
 
         ImGui::Begin("Settings");
-        ImGui::SliderFloat("xpos", &x, -10.0f, 10.0f);
+        //ImGui::SliderFloat("xpos", &x, -10.0f, 10.0f);
+        ImGui::Checkbox("Wireframe", &wir);
         ImGui::End();
 
         uiServer.ui_end();
         windowServer.updateWindow(mainWindow);
+
+        if (wir) { renderServer.setRenderMode(Flake::RenderMode::WIREFRAME); }
+        else { renderServer.setRenderMode(Flake::RenderMode::NORMAL); }
     }
 
     uiServer.ui_destroy();
