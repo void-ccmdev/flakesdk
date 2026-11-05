@@ -23,9 +23,13 @@ void RenderServer::initialize()
 
     // Inform OpenGL on how the data is made.
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Datatypes::Vertex), reinterpret_cast<void*>(offsetof(Datatypes::Vertex, position)));
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Datatypes::Vertex), reinterpret_cast<void*>(offsetof(Datatypes::Vertex, color_rgb)));
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Datatypes::Vertex), (void*)offsetof(Datatypes::Vertex, position));
+    //glEnableVertexAttribArray(1);
+    //glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Datatypes::Vertex), reinterpret_cast<void*>(offsetof(Datatypes::Vertex, color_rgb)));
+
+    // count of inds anmd verts
+    m_used_inds_count = 0;
+    m_used_vert_count = 0;
 
     // ...
 }
@@ -55,24 +59,28 @@ void RenderServer::render()
     if (m_render_queue.empty()) { return; }
 
     for (auto& object : m_render_queue)
-    {
+    {   
+        if (object.rendered) { return; }
         auto& mesh = object.mesh;
-
-        if (mesh.vertices.empty() || mesh.indices.empty())
-            continue;
 
         object.material.shader.load();
         object.material.shader.use();
 
         glBindBuffer(GL_ARRAY_BUFFER, VBO);
-        glBufferData(GL_ARRAY_BUFFER,static_cast<GLsizeiptr>(mesh.vertices.size() * sizeof(Datatypes::Vertex)),mesh.vertices.data(),GL_DYNAMIC_DRAW);
+        glBufferSubData(GL_ARRAY_BUFFER, 0, mesh.vertices.size() * sizeof(Datatypes::Vertex), mesh.vertices.data());
 
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, static_cast<GLsizeiptr>(mesh.indices.size() * sizeof(uint32_t)), mesh.indices.data(), GL_DYNAMIC_DRAW);
+        glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, (GLsizeiptr)sizeof(mesh.indices), mesh.indices.data());
+        object.rendered = true;
+
+        m_used_vert_count = m_used_vert_count + (uint32_t)mesh.vertices.size();
+        m_used_inds_count = m_used_inds_count + (uint32_t)mesh.indices.size();
+        std::cout << m_used_vert_count << std::endl;
+        std::cout << m_used_inds_count << std::endl;
     }
-    
     m_camera.handleMovement();
 
     glBindVertexArray(VAO);
-    glDrawElements(GL_TRIANGLES, 100, GL_UNSIGNED_INT, NULL);
+    //glDrawArrays(GL_TRIANGLES, 0, 100);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, NULL);
 }

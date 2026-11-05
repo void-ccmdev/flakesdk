@@ -23,5 +23,6 @@ namespace Flake {
         std::vector<Datatypes::MeshObject> m_render_queue;
         GLuint VAO, VBO, EBO;
         Datatypes::Camera m_camera;
+        uint32_t m_used_vert_count, m_used_inds_count;
     };
 }

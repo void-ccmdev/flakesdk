@@ -44,6 +44,7 @@ int main(void)
 
     //Create a mesh with a material
     Datatypes::MeshObject mesh;
+    Datatypes::MeshObject mesh2;
     Datatypes::Material material;
     Datatypes::Shader shader;
     Datatypes::Camera camera;
@@ -60,16 +61,19 @@ int main(void)
     //Setup material
     material.shader = shader;
     mesh.material = material;
+    mesh2.material = material;
 
     //Setup mesh
     mesh.mesh.makeQuad();
+    //mesh2.mesh.makeTriangle();
     
     //Add mesh to render queue
     renderServer.addToQueue(mesh);
+    //renderServer.addToQueue(mesh2);
     renderServer.setCamera(camera);
 
     //Sliders
-    float x = 0.0f;
+    //float x = 0.0f;
     bool wir = 0;
 
     while (!windowServer.shouldWindowClose(mainWindow)) {
