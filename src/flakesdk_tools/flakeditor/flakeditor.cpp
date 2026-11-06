@@ -45,31 +45,38 @@ int main(void)
     //Create a mesh with a material
     Datatypes::MeshObject mesh;
     Datatypes::MeshObject mesh2;
-    Datatypes::Material material;
+    Datatypes::Material material1;
+    Datatypes::Material material2;
     Datatypes::Shader shader;
+    Datatypes::Shader shader2;
     Datatypes::Camera camera;
 
     //Setup shaders
     Flake::File vert_shader;
     Flake::File frag_shader;
-    vert_shader.path = std::string("src/flake_engine/graphics/shaders/default_vertex_shader.glsl");
-    frag_shader.path = std::string("src/flake_engine/graphics/shaders/default_fragment_shader.glsl");
+    vert_shader.path = std::string("src\\flake_engine\\graphics\\shaders\\default_vertex_shader.glsl");
+    frag_shader.path = std::string("src\\flake_engine\\graphics\\shaders\\default_fragment_shader.glsl");
 
     shader.vertex_shader_file = vert_shader;
     shader.fragment_shader_file = frag_shader;
+    shader2.vertex_shader_file = vert_shader;
+    shader2.fragment_shader_file = frag_shader;
 
     //Setup material
-    material.shader = shader;
-    mesh.material = material;
-    mesh2.material = material;
+    material1.shader = shader;
+    material2.shader = shader2;
+    mesh.material = material1;
+    mesh2.material = material2;
 
     //Setup mesh
+    mesh2.mesh.makeTriangle();
     mesh.mesh.makeQuad();
     //mesh2.mesh.makeTriangle();
     
     //Add mesh to render queue
+    
+    renderServer.addToQueue(mesh2);
     renderServer.addToQueue(mesh);
-    //renderServer.addToQueue(mesh2);
     renderServer.setCamera(camera);
 
     //Sliders

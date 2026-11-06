@@ -17,15 +17,15 @@ void RenderServer::initialize()
     // Binding and setting up data for buffers.
     glBindVertexArray(VAO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, 0, nullptr, GL_DYNAMIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, 10000, 0, GL_STREAM_DRAW);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, 0, nullptr, GL_DYNAMIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, 10000, 0, GL_STREAM_DRAW);
 
     // Inform OpenGL on how the data is made.
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Datatypes::Vertex), (void*)offsetof(Datatypes::Vertex, position));
-    //glEnableVertexAttribArray(1);
-    //glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Datatypes::Vertex), reinterpret_cast<void*>(offsetof(Datatypes::Vertex, color_rgb)));
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Datatypes::Vertex), (void*)offsetof(Datatypes::Vertex, color_rgb));
 
     // count of inds anmd verts
     m_used_inds_count = 0;
@@ -60,27 +60,41 @@ void RenderServer::render()
 
     for (auto& object : m_render_queue)
     {   
-        if (object.rendered) { return; }
-        auto& mesh = object.mesh;
+        if (!object.rendered) { 
+            auto& mesh = object.mesh;
 
-        object.material.shader.load();
-        object.material.shader.use();
+            object.material.shader.load();
+            object.material.shader.use();
 
-        glBindBuffer(GL_ARRAY_BUFFER, VBO);
-        glBufferSubData(GL_ARRAY_BUFFER, 0, mesh.vertices.size() * sizeof(Datatypes::Vertex), mesh.vertices.data());
+            // 1. Calculate offsets
+            size_t vOffset = m_used_vert_count * sizeof(Datatypes::Vertex);
+            size_t iOffset = m_used_inds_count * sizeof(uint32_t);
 
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-        glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, (GLsizeiptr)sizeof(mesh.indices), mesh.indices.data());
-        object.rendered = true;
+            // 2. Upload Vertices
+            glBindBuffer(GL_ARRAY_BUFFER, VBO);
+            glBufferSubData(GL_ARRAY_BUFFER, vOffset, mesh.vertices.size() * sizeof(Datatypes::Vertex), mesh.vertices.data());
 
-        m_used_vert_count = m_used_vert_count + (uint32_t)mesh.vertices.size();
-        m_used_inds_count = m_used_inds_count + (uint32_t)mesh.indices.size();
-        std::cout << m_used_vert_count << std::endl;
-        std::cout << m_used_inds_count << std::endl;
+            // 3. Offset Indices and Upload
+            // We must create a temporary shifted copy of the indices
+            std::vector<uint32_t> shiftedIndices = mesh.indices;
+            for (auto& index : shiftedIndices) {
+                index += m_used_vert_count;
+            }
+
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+            glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, iOffset, shiftedIndices.size() * sizeof(uint32_t), shiftedIndices.data());
+
+            // 4. Update persistent counts
+            m_used_vert_count += (uint32_t)mesh.vertices.size();
+            m_used_inds_count += (uint32_t)mesh.indices.size();
+            
+            object.rendered = true;
+        }
     }
     m_camera.handleMovement();
 
     glBindVertexArray(VAO);
     //glDrawArrays(GL_TRIANGLES, 0, 100);
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, NULL);
+    glDrawElements(GL_TRIANGLES, m_used_inds_count, GL_UNSIGNED_INT, NULL);
+    
 }
